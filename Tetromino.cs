@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices.ComTypes;
 using Tao.Sdl;
 
 
@@ -15,19 +14,20 @@ namespace Tetromino
         public int offsetY;
     };
 
-    internal class Shape
+    internal class Tetromino
     {
-
-        private const int tileSize = 30;
-        private int[] colors;
         public ShapeRot current;
         public ShapeRot next;
         public Grid grid;
         public bool fullBoard = false;
-        private Random rand;
         public int scoring = 0;
 
-        public Shape()
+        private Random rand;
+        private const int tileSize = 30;
+        private int[] colors;
+
+
+        public Tetromino()
         {
             colors = new Colors().colors;
             current = GetRandom();
@@ -35,6 +35,9 @@ namespace Tetromino
             grid = new Grid();
         }
 
+
+
+        // Creación y seleccion de figuras
         public ShapeRot GetRandom()
         {
             rand = new Random();
@@ -196,6 +199,11 @@ namespace Tetromino
             };
         }
 
+
+
+        /*
+            Render Figuras
+         */
         public void Draw(IntPtr img)
         {
 
@@ -237,7 +245,7 @@ namespace Tetromino
                 }
         }
 
-
+        // Dezplazamiento
         public void Move(int x, int y)
         {
             current.offsetX += x;
@@ -274,20 +282,27 @@ namespace Tetromino
             }
         }
 
-        // Colision con bordes tablero
-        private bool ShapeInsideBoard()
+        public void Rotate()
         {
-             (int posX, int posY)[] currentPositions = GetPositions();
+            (int posX, int posY)[] positions = current.rotations[current.stateRotation];
+            current.stateRotation++;
 
-            for (int i = 0; i < currentPositions.GetLength(0) ; i++)
+            // si llega a la ultima posicion, vuelve a posicion 0
+            if (current.stateRotation >= positions.GetLength(0))
             {
-                if (!grid.RangeIsInside(currentPositions[i].posX, currentPositions[i].posY))
+                current.stateRotation = 0;
+            }
+
+            // si colisiona deshace la rotacion
+            if (!ShapeInsideBoard() || CollisionWithShapes())
+            {
+                current.stateRotation--;
+                if (current.stateRotation < 0)
                 {
-                    return false;
+                    current.stateRotation = positions.GetLength(0) - 1;
                 }
             }
 
-            return true;
         }
 
         private (int, int)[] GetPositions()
@@ -303,27 +318,26 @@ namespace Tetromino
             return newPositions;
         }
 
-   
-        public void Rotate()
+
+
+        /*
+         * Colisiones
+         */
+
+        // Colisiones bordes del tablero
+        private bool ShapeInsideBoard()
         {
-            (int posX, int posY)[] positions = current.rotations[current.stateRotation];
-            current.stateRotation++;
+             (int posX, int posY)[] currentPositions = GetPositions();
 
-            // si llega a la ultima posicion, vuelve a posicion 0
-            if (current.stateRotation >= positions.GetLength(0))
+            for (int i = 0; i < currentPositions.GetLength(0) ; i++)
             {
-                current.stateRotation = 0;
-            }
-
-            // si colisiona deshace la rotacion
-            if (!ShapeInsideBoard() || CollisionWithShapes()) {
-                current.stateRotation--;
-                if (current.stateRotation < 0)
+                if (!grid.RangeIsInside(currentPositions[i].posX, currentPositions[i].posY))
                 {
-                    current.stateRotation = positions.GetLength(0) - 1;
+                    return false;
                 }
             }
-          
+
+            return true;
         }
 
         private bool insideLateralBoard(int posX, int posY)
@@ -331,6 +345,7 @@ namespace Tetromino
             return (posX > -1 && posX < 10) && (posY < 20 && posY > -1);
         }
 
+        // Colisiones con otras piezas
         private bool CollisionWithShapes() {
             (int posX, int posY)[] positions = GetPositions();
 
@@ -343,6 +358,9 @@ namespace Tetromino
             }
             return false;
         }
+
+
+        // Fija la pieza al tablero
         private void LockShape()
         {
             Sound sound = new Sound();
@@ -372,7 +390,6 @@ namespace Tetromino
                 sound.StartPunch();
             }
         }
-
         private void RegenerateShapes()
         {
             current = next;

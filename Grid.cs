@@ -72,6 +72,11 @@ namespace Tetromino
                 }
             }
         }
+
+
+        /*
+         * Collisiones
+         */
         public void LockTile(int posX, int posY, int color)
         {
             matrix[posX, posY] = color; 
@@ -87,6 +92,10 @@ namespace Tetromino
             return matrix[posX, posY] == 0; // si la celda es igual a 0 tiene color gris, es decir está libre
         }
 
+
+        /*
+         * Validaciones de fila completa
+         */
         public int DeleteCompletedRows()
         {
             int countRowsToDelete = 0;
@@ -142,6 +151,10 @@ namespace Tetromino
             }
         }
 
+
+        /*
+         * Reset tablero
+         */
         public void CleanBoard()
         {
             for (int i = 0; i < matrix.GetLength(0); i++)

@@ -14,7 +14,7 @@ namespace Tetromino
         const int windowHeight = 600;
         
         static Grid grid;
-        static Shape shape;
+        static Tetromino tetromino;
         static ShapeRot currentShape;
         
         static Sound sound = new Sound();
@@ -36,6 +36,7 @@ namespace Tetromino
         static int scoring = 0;
         static bool keyPressed = false;
         const float releaseKey = 0.1f;
+        static bool pause = false;
 
         static void Main(string[] args)
         {
@@ -43,8 +44,8 @@ namespace Tetromino
 
             font = Engine.LoadFont("assets/font.ttf", 30);
             
-            shape = new Shape();
-            grid = shape.grid;
+            tetromino = new Tetromino();
+            grid = tetromino.grid;
 
             gameTime.startTime = DateTime.Now;
             gameTime.speed = 0.7f;  // Velocidad de caída de la pieza
@@ -53,6 +54,7 @@ namespace Tetromino
             while (true)
             {
                 CheckInputs();
+
                 Update();
                 Render();
                 Sdl.SDL_Delay(20);  
@@ -61,45 +63,45 @@ namespace Tetromino
 
         static void CheckInputs()
         {
-            if (Engine.KeyPress(Engine.KEY_UP) && running && !keyPressed)
+            if (Engine.KeyPress(Engine.KEY_UP) && running && !keyPressed && !pause)
             {
-                shape.Rotate();
+                tetromino.Rotate();
                 keyPressed = true;
             }
 
-            if (Engine.KeyPress(Engine.KEY_DOWN) && running && !keyPressed)
+            if (Engine.KeyPress(Engine.KEY_DOWN) && running && !keyPressed && !pause)
             {
-                shape.MoveDown(0,1);
+                tetromino.MoveDown(0,1);
                 keyPressed = true;
             }
 
-            if (Engine.KeyPress(Engine.KEY_LEFT) && running && !keyPressed)
+            if (Engine.KeyPress(Engine.KEY_LEFT) && running && !keyPressed && !pause)
             {
-                shape.MoveLeft(-1, 0);
+                tetromino.MoveLeft(-1, 0);
                 keyPressed = true;
             }
 
-            if (Engine.KeyPress(Engine.KEY_RIGHT) && running && !keyPressed)
+            if (Engine.KeyPress(Engine.KEY_RIGHT) && running && !keyPressed && !pause)
             {
-                shape.MoveRight(1, 0);
+                tetromino.MoveRight(1, 0);
                 keyPressed = true;
-            }
-
-            if (Engine.KeyPress(Engine.KEY_ESP) && !running)
-            {
-                grid.CleanBoard();
-                running = true;
-                shape.fullBoard = false;
             }
 
             if (Engine.KeyPress(Engine.KEY_ESP) && menu)
             {
-                grid.CleanBoard();
-                running = true;
-                menu = false;
-                shape.fullBoard = false;
-                sound.StopBackgroundMusic();
-                sound.StartBackgroundMusic();
+                RestartGame();
+            }
+
+            if (Engine.KeyPress(Engine.KEY_P) && !keyPressed && !menu)
+            {
+                pause = !pause;
+                keyPressed = true;
+            }
+
+
+            if (Engine.KeyPress(Engine.KEY_ESP) && !menu && !running)  // Reinciar despues de game over
+            {
+                RestartGame();
             }
 
             if (Engine.KeyPress(Engine.KEY_ESC) && running)
@@ -111,12 +113,12 @@ namespace Tetromino
         static void Update()
         {
             UpdateTime();
-            currentShape = shape.current;
+            currentShape = tetromino.current;
 
 
-            if (gameTime.acumulatedTime > gameTime.speed && running)
+            if (gameTime.acumulatedTime > gameTime.speed && running && !pause)
             {
-                shape.MoveDown(0, 1);
+                tetromino.MoveDown(0, 1);
                 gameTime.acumulatedTime = 0;
            
             }
@@ -127,7 +129,7 @@ namespace Tetromino
                 gameTime.acumulatedTimeToRelease = 0;
             }
 
-            if (shape.fullBoard) {
+            if (tetromino.fullBoard) {
                 running = false;
             }
 
@@ -136,12 +138,9 @@ namespace Tetromino
                 gameTime.speed = 0.2f; // aumenta dificultad, la pieza cae mas rápido
             }
 
-            if (!running)
-            {
-                sound.StopBackgroundMusic();
-            }
+            sound.CheckIfPlayFinishIt();
 
-            scoring = shape.scoring;
+            scoring = tetromino.scoring;
         }
 
         static void Render()
@@ -168,22 +167,25 @@ namespace Tetromino
                 return;
             }
 
-
             // Puntos y próxima pieza
             Engine.DrawText("Score:", windowWidht - 300, 10, 200, 200, 200, font);
             Engine.DrawText(scoring.ToString(), windowWidht - 70, 10, 200, 200, 200, font);
 
             Engine.DrawText("Next:", windowWidht - 300, 150, 200, 200, 200, font);
-            shape.DrawNextShape(Engine.screen);
-
+            tetromino.DrawNextShape(Engine.screen);
 
             // Tablero y Piezas
-            shape.grid.Draw(Engine.screen);
-            shape.Draw(Engine.screen);
-            
+            tetromino.grid.Draw(Engine.screen);
+            tetromino.Draw(Engine.screen);
+
+            // Juego en pausa 
+            if (pause)
+            {
+                Engine.DrawText("Pause", windowWidht / 2 - 100, 200, 180, 180, 180, font);
+            }
+
             Engine.Show();
         }
-
 
         static void UpdateTime()
         {
@@ -194,6 +196,14 @@ namespace Tetromino
             gameTime.acumulatedTimeToRelease += gameTime.deltaTime;
         }
 
+        static void RestartGame()
+        {
+            grid.CleanBoard();
+            running = true;
+            menu = !menu;
+            tetromino.fullBoard = false;
+            tetromino.scoring = 0;
+        }
   
     }
 }

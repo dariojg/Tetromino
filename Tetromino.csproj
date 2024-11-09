@@ -79,7 +79,7 @@
   <ItemGroup>
     <Compile Include="Colors.cs" />
     <Compile Include="Grid.cs" />
-    <Compile Include="Shape.cs" />
+    <Compile Include="Tetromino.cs" />
     <Compile Include="Engine\Font.cs" />
     <Compile Include="Engine\Engine.cs" />
     <Compile Include="Engine\Image.cs" />
@@ -100,16 +100,10 @@
     <Content Include="assets\board3.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="sound\golpe.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="sound\RiseAbove.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="sound\whoosh.mp3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sound\wooden.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="sound\wooden2.mp3">

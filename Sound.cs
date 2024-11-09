@@ -22,6 +22,7 @@ namespace Tetromino
         {
             waveOut.Init(fileReader);
             waveOut.Play();
+
         }
 
         public void StopBackgroundMusic() { 
@@ -56,6 +57,17 @@ namespace Tetromino
 
             filePunchReader.Position = 0; // reseteo el archivo
             wo.Stop();
+        }
+
+        public void CheckIfPlayFinishIt()
+        {
+            if (waveOut.PlaybackState == PlaybackState.Stopped) // espero que termine de reproducir
+            {
+                waveOut.Stop();
+                fileReader.Position = 0;
+                StartBackgroundMusic();
+            }
+          
         }
 
     }
