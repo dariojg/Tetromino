@@ -3,7 +3,7 @@ using Tao.Sdl;
 
 namespace Tetromino
 {
-    internal class Grid
+    internal class Board
     {
 
         public int[,] matrix;
@@ -11,7 +11,7 @@ namespace Tetromino
         const int tileSize = 30;
 
         public int[] colors;
-        public Grid()
+        public Board()
         {
             matrix = new int[10, 20];
             matrixNextShape = new int[4, 4];
@@ -50,6 +50,8 @@ namespace Tetromino
             }
         }
 
+
+        // fondo de la pieza siguiente
         public void DrawBoardNextShape(IntPtr img)
         {
             int initPosX = 370;

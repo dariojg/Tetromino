@@ -7,18 +7,16 @@ namespace Tetromino
 
     class Program
     {
-        
-      
         static Font font;
         const int windowWidht = 640;
         const int windowHeight = 600;
         
-        static Grid grid;
+        static Board grid;
         static Tetromino tetromino;
         static ShapeRot currentShape;
         
         static Sound sound = new Sound();
-         struct GameTime
+        struct GameTime
         {
             public DateTime startTime;
             public float deltaTime;
@@ -28,7 +26,8 @@ namespace Tetromino
             public float acumulatedTimeToRelease;
 
         }
-        static GameTime gameTime = new GameTime { };
+
+        static GameTime gameTime = new GameTime{};
 
         // Variables de estado
         static bool running = true;
@@ -45,7 +44,7 @@ namespace Tetromino
             font = Engine.LoadFont("assets/font.ttf", 30);
             
             tetromino = new Tetromino();
-            grid = tetromino.grid;
+            grid = tetromino.board;
 
             gameTime.startTime = DateTime.Now;
             gameTime.speed = 0.7f;  // Velocidad de caída de la pieza
@@ -54,7 +53,6 @@ namespace Tetromino
             while (true)
             {
                 CheckInputs();
-
                 Update();
                 Render();
                 Sdl.SDL_Delay(20);  
@@ -110,11 +108,11 @@ namespace Tetromino
             }
 
         }
+       
         static void Update()
         {
             UpdateTime();
             currentShape = tetromino.current;
-
 
             if (gameTime.acumulatedTime > gameTime.speed && running && !pause)
             {
@@ -175,7 +173,7 @@ namespace Tetromino
             tetromino.DrawNextShape(Engine.screen);
 
             // Tablero y Piezas
-            tetromino.grid.Draw(Engine.screen);
+            tetromino.board.Draw(Engine.screen);
             tetromino.Draw(Engine.screen);
 
             // Juego en pausa 

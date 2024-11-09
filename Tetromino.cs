@@ -18,7 +18,7 @@ namespace Tetromino
     {
         public ShapeRot current;
         public ShapeRot next;
-        public Grid grid;
+        public Board board;
         public bool fullBoard = false;
         public int scoring = 0;
 
@@ -32,9 +32,8 @@ namespace Tetromino
             colors = new Colors().colors;
             current = GetRandom();
             next = GetRandom();
-            grid = new Grid();
+            board = new Board();
         }
-
 
 
         // Creación y seleccion de figuras
@@ -64,10 +63,10 @@ namespace Tetromino
 
         public ShapeRot LShape()
         {
-            // { 0, 1, 0},
-            // { 0, 1, 0},
-            // { 1, 1, 0}
-            // Posiciones en la matrix - JShape
+            // { 0, 1, 0 },
+            // { 0, 1, 0 },
+            // { 0, 1, 1 }
+            // Posiciones en la matrix - LShape
             (int posX, int posY)[] rot1 = { (0, 0), (1, 0), (1, 1), (1, 2) };
             (int posX, int posY)[] rot2 = { (0, 1), (0, 2), (1, 1), (2, 1) };
             (int posX, int posY)[] rot3 = { (1, 0), (1, 1), (1, 2), (2, 2) };
@@ -254,14 +253,12 @@ namespace Tetromino
 
         public void MoveDown(int row, int col)
         {
-            bool collision = false;
             Move(row, col);
             if (!ShapeInsideBoard() || CollisionWithShapes())
             {
                 Move(0, -col);
                 LockShape();
             }
-
         }
 
         public void MoveRight(int row, int col)
@@ -331,7 +328,7 @@ namespace Tetromino
 
             for (int i = 0; i < currentPositions.GetLength(0) ; i++)
             {
-                if (!grid.RangeIsInside(currentPositions[i].posX, currentPositions[i].posY))
+                if (!board.RangeIsInside(currentPositions[i].posX, currentPositions[i].posY))
                 {
                     return false;
                 }
@@ -340,10 +337,6 @@ namespace Tetromino
             return true;
         }
 
-        private bool insideLateralBoard(int posX, int posY)
-        {
-            return (posX > -1 && posX < 10) && (posY < 20 && posY > -1);
-        }
 
         // Colisiones con otras piezas
         private bool CollisionWithShapes() {
@@ -351,7 +344,7 @@ namespace Tetromino
 
             for (int i = 0; i < positions.GetLength(0); i++)
             {
-                if (!grid.CellIsEmpty(positions[i].posX, positions[i].posY))
+                if (!board.CellIsEmpty(positions[i].posX, positions[i].posY))
                 {
                     return true;
                 }
@@ -368,11 +361,12 @@ namespace Tetromino
 
             for (int i = 0; i < positions.GetLength(0); i++)
             {
-                grid.LockTile(positions[i].posX, positions[i].posY, current.color);
+                board.LockTile(positions[i].posX, positions[i].posY, current.color);
             }
 
             RegenerateShapes();
-            int rowsDeleted = grid.DeleteCompletedRows();
+
+            int rowsDeleted = board.DeleteCompletedRows();
             if (CollisionWithShapes()) 
             {
                 fullBoard = true;
@@ -390,6 +384,7 @@ namespace Tetromino
                 sound.StartPunch();
             }
         }
+
         private void RegenerateShapes()
         {
             current = next;
