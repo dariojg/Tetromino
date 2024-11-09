@@ -1,41 +1,57 @@
 ﻿using System;
 using Tao.Sdl;
 
+
 namespace Tetromino
 {
 
     class Program
     {
+        
+      
         static Font font;
-  
-
+        const int windowWidht = 640;
+        const int windowHeight = 600;
+        
         static Grid grid;
         static Shape shape;
         static ShapeRot currentShape;
-        static ShapeRot nextShape;
+        
+        static Sound sound = new Sound();
+         struct GameTime
+        {
+            public DateTime startTime;
+            public float deltaTime;
+            public float lastTime;
+            public float acumulatedTime;
+            public float speed;
+            public float acumulatedTimeToRelease;
 
-        static int windowWidht = 640;
-        static int windowHeight = 600;
+        }
+        static GameTime gameTime = new GameTime { };
 
-        static int intervalTicker = 20000;
-        static int currentTime = 0;
-        static int lastTime = 0;
-
+        // Variables de estado
         static bool running = true;
         static bool menu = true;
         static int scoring = 0;
+        static bool keyPressed = false;
+        const float releaseKey = 0.1f;
+
         static void Main(string[] args)
         {
             Engine.Initialize(windowWidht, windowHeight);
 
             font = Engine.LoadFont("assets/font.ttf", 30);
-
+            
             shape = new Shape();
             grid = shape.grid;
 
+            gameTime.startTime = DateTime.Now;
+            gameTime.speed = 0.7f;  // Velocidad de caída de la pieza
+
+
             while (true)
             {
-                currentTime += Sdl.SDL_GetTicks();
                 CheckInputs();
                 Update();
                 Render();
@@ -45,24 +61,28 @@ namespace Tetromino
 
         static void CheckInputs()
         {
-            if (Engine.KeyPress(Engine.KEY_UP) && running)
+            if (Engine.KeyPress(Engine.KEY_UP) && running && !keyPressed)
             {
                 shape.Rotate();
+                keyPressed = true;
             }
 
-            if (Engine.KeyPress(Engine.KEY_DOWN) && running)
+            if (Engine.KeyPress(Engine.KEY_DOWN) && running && !keyPressed)
             {
                 shape.MoveDown(0,1);
+                keyPressed = true;
             }
 
-            if (Engine.KeyPress(Engine.KEY_LEFT) && running)
+            if (Engine.KeyPress(Engine.KEY_LEFT) && running && !keyPressed)
             {
                 shape.MoveLeft(-1, 0);
+                keyPressed = true;
             }
 
-            if (Engine.KeyPress(Engine.KEY_RIGHT) && running)
+            if (Engine.KeyPress(Engine.KEY_RIGHT) && running && !keyPressed)
             {
                 shape.MoveRight(1, 0);
+                keyPressed = true;
             }
 
             if (Engine.KeyPress(Engine.KEY_ESP) && !running)
@@ -78,28 +98,47 @@ namespace Tetromino
                 running = true;
                 menu = false;
                 shape.fullBoard = false;
+                sound.StopBackgroundMusic();
+                sound.StartBackgroundMusic();
             }
-
 
             if (Engine.KeyPress(Engine.KEY_ESC) && running)
             {
                 Environment.Exit(0);
-                SdlMixer.Mix_CloseAudio();
             }
 
         }
-
         static void Update()
         {
-            currentShape = shape.current; 
-            if (currentTime >= intervalTicker)
+            UpdateTime();
+            currentShape = shape.current;
+
+
+            if (gameTime.acumulatedTime > gameTime.speed && running)
             {
-               // shape.MoveDown(0, 1);
-                currentTime = 0;
+                shape.MoveDown(0, 1);
+                gameTime.acumulatedTime = 0;
+           
+            }
+
+            if (gameTime.acumulatedTimeToRelease > releaseKey)
+            {
+                keyPressed = false;
+                gameTime.acumulatedTimeToRelease = 0;
             }
 
             if (shape.fullBoard) {
                 running = false;
+            }
+
+            if(scoring > 500 && gameTime.speed > 0.2f)  
+            {
+                gameTime.speed = 0.2f; // aumenta dificultad, la pieza cae mas rápido
+            }
+
+            if (!running)
+            {
+                sound.StopBackgroundMusic();
             }
 
             scoring = shape.scoring;
@@ -109,6 +148,8 @@ namespace Tetromino
         {
             Engine.Clear();
 
+
+            // Pantalla Menu
             if (menu)
             {
                 Engine.DrawText("Tetromino", 200, 100, 123, 255, 255, font);
@@ -117,6 +158,8 @@ namespace Tetromino
                 return;
             }
 
+
+            // Pantalla Juego terminado
             if (!running && !menu)
             {
                 Engine.DrawText("Game Over", windowWidht / 2 - 100, 100, 123, 255, 255, font);
@@ -125,17 +168,30 @@ namespace Tetromino
                 return;
             }
 
+
+            // Puntos y próxima pieza
             Engine.DrawText("Score:", windowWidht - 300, 10, 200, 200, 200, font);
             Engine.DrawText(scoring.ToString(), windowWidht - 70, 10, 200, 200, 200, font);
 
-
-            shape.grid.Draw(Engine.screen);
-            shape.Draw(Engine.screen);
-
-           // shape.grid.DrawBoardNextShape(Engine.screen);
+            Engine.DrawText("Next:", windowWidht - 300, 150, 200, 200, 200, font);
             shape.DrawNextShape(Engine.screen);
 
+
+            // Tablero y Piezas
+            shape.grid.Draw(Engine.screen);
+            shape.Draw(Engine.screen);
+            
             Engine.Show();
+        }
+
+
+        static void UpdateTime()
+        {
+            float currenTime = (float)(DateTime.Now - gameTime.startTime).TotalSeconds;
+            gameTime.deltaTime = currenTime - gameTime.lastTime;
+            gameTime.lastTime = currenTime;
+            gameTime.acumulatedTime += gameTime.deltaTime;
+            gameTime.acumulatedTimeToRelease += gameTime.deltaTime;
         }
 
   

@@ -18,8 +18,8 @@ namespace Tetromino
     internal class Shape
     {
 
-        int tileSize;
-        int[] colors;
+        private const int tileSize = 30;
+        private int[] colors;
         public ShapeRot current;
         public ShapeRot next;
         public Grid grid;
@@ -29,7 +29,6 @@ namespace Tetromino
 
         public Shape()
         {
-            tileSize = 30;
             colors = new Colors().colors;
             current = GetRandom();
             next = GetRandom();
@@ -44,11 +43,11 @@ namespace Tetromino
             switch (randomShape)
             {
                 case 0:
-                    return LShape();
+                    return JShape();
                 case 1:
                     return TShape();
                 case 2:
-                    return JShape();
+                    return LShape();
                 case 3:
                     return IShape();
                 case 4:
@@ -60,16 +59,16 @@ namespace Tetromino
             }
         }
 
-        public ShapeRot JShape()
+        public ShapeRot LShape()
         {
             // { 0, 1, 0},
             // { 0, 1, 0},
             // { 1, 1, 0}
-            // Posiciones en la matrix - LShape
-            (int posX, int posY)[] rot1 = { (1, 0), (1, 1), (1, 2), (0, 2) };
-            (int posX, int posY)[] rot2 = { (0, 0), (0, 1), (1, 1), (2, 1) };
-            (int posX, int posY)[] rot3 = { (0, 0), (1, 0), (0, 1), (0, 2) };
-            (int posX, int posY)[] rot4 = { (0, 0), (1, 0), (2, 0), (2, 1) };
+            // Posiciones en la matrix - JShape
+            (int posX, int posY)[] rot1 = { (0, 0), (1, 0), (1, 1), (1, 2) };
+            (int posX, int posY)[] rot2 = { (0, 1), (0, 2), (1, 1), (2, 1) };
+            (int posX, int posY)[] rot3 = { (1, 0), (1, 1), (1, 2), (2, 2) };
+            (int posX, int posY)[] rot4 = { (0, 1), (1, 1), (2, 0), (2, 1) };
 
             // array de rotaciones
             (int posX, int posY)[][] rotations = { rot1, rot2, rot3, rot4 };
@@ -102,12 +101,12 @@ namespace Tetromino
             };
         }
 
-        public ShapeRot LShape()
+        public ShapeRot JShape()
         {
-            (int posX, int posY)[] rot1 = { (0, 0), (0, 1), (1, 1), (2, 1) };
-            (int posX, int posY)[] rot2 = { (1, 0), (1, 1), (0, 2), (1, 2) };
-            (int posX, int posY)[] rot3 = { (0, 0), (1, 0), (2, 0), (2, 1) };
-            (int posX, int posY)[] rot4 = { (0, 0), (1, 0), (0, 1), (0, 2) };
+            (int posX, int posY)[] rot1 = { (1, 0), (1, 1), (1, 2), (0, 2) };
+            (int posX, int posY)[] rot2 = { (0, 0), (0, 1), (1, 1), (2, 1) };
+            (int posX, int posY)[] rot3 = { (0, 0), (1, 0), (0, 1), (0, 2) };
+            (int posX, int posY)[] rot4 = { (0, 0), (1, 0), (2, 0), (2, 1) };
 
             (int posX, int posY)[][] rotations = { rot1, rot2, rot3, rot4 };
 
@@ -123,10 +122,10 @@ namespace Tetromino
 
         public ShapeRot IShape()
         {
-            (int posX, int posY)[] rot1 = { (0, 0), (1, 0), (2, 0), (3, 0) };
-            (int posX, int posY)[] rot2 = { (0, 0), (0, 1), (0, 2), (0, 3) };
-            (int posX, int posY)[] rot3= { (0, 0), (1, 0), (2, 0), (3, 0) };
-            (int posX, int posY)[] rot4= { (0, 0), (0, 1), (0, 2), (0, 3) };
+            (int posX, int posY)[] rot1 = { (1, 0), (1, 1), (1, 2), (1, 3) };
+            (int posX, int posY)[] rot2 = { (0, 2), (1, 2), (2, 2), (3, 2) };
+            (int posX, int posY)[] rot3 = { (1, 0), (1, 1), (1, 2), (1, 3) };
+            (int posX, int posY)[] rot4 = { (0, 2), (1, 2), (2, 2), (3, 2) };
 
             (int posX, int posY)[][] rotations = { rot1, rot2, rot3, rot4 };
 
@@ -140,12 +139,12 @@ namespace Tetromino
             };
         }
 
-        public ShapeRot ZShape()
+        public ShapeRot SShape()
         {
-            (int posX, int posY)[] rot1 = { (0, 0), (1, 0), (1, 1), (2, 1) };
-            (int posX, int posY)[] rot2 = { (1, 0), (0, 1), (1, 1), (0, 2) };
-            (int posX, int posY)[] rot3 = { (0, 0), (1, 0), (1, 1), (2, 1) };
-            (int posX, int posY)[] rot4 = { (1, 0), (0, 1), (1, 1), (0, 2) };
+            (int posX, int posY)[] rot1 = { (0, 0), (0, 1), (1, 1), (1, 2) };
+            (int posX, int posY)[] rot2 = { (0, 2), (1, 1), (1, 2), (2, 1) };
+            (int posX, int posY)[] rot4 = { (0, 0), (0, 1), (1, 1), (1, 2) };
+            (int posX, int posY)[] rot3 = { (0, 2), (1, 1), (1, 2), (2, 1) };
 
             (int posX, int posY)[][] rotations = { rot1, rot2, rot3, rot4 };
 
@@ -159,12 +158,12 @@ namespace Tetromino
             };
         }
 
-        public ShapeRot SShape()
+        public ShapeRot ZShape()
         {
-            (int posX, int posY)[] rot1 = { (1, 0), (2, 0), (0, 1), (1, 1) };
-            (int posX, int posY)[] rot2 = { (0, 0), (0, 1), (1, 1), (1, 2) };
-            (int posX, int posY)[] rot3 = { (1, 0), (2, 0), (0, 1), (1, 1) };
-            (int posX, int posY)[] rot4 = { (0, 0), (0, 1), (1, 1), (1, 2) };
+            (int posX, int posY)[] rot1 = { (0, 1), (0, 2), (1, 0), (1, 1) };
+            (int posX, int posY)[] rot2 = { (0, 1), (1, 1), (1, 2), (2, 2) };
+            (int posX, int posY)[] rot3 = { (0, 1), (0, 2), (1, 0), (1, 1) };
+            (int posX, int posY)[] rot4 = { (0, 1), (1, 1), (1, 2), (2, 2) };
 
             (int posX, int posY)[][] rotations = { rot1, rot2, rot3, rot4 };
 
@@ -247,12 +246,14 @@ namespace Tetromino
 
         public void MoveDown(int row, int col)
         {
+            bool collision = false;
             Move(row, col);
             if (!ShapeInsideBoard() || CollisionWithShapes())
             {
                 Move(0, -col);
                 LockShape();
             }
+
         }
 
         public void MoveRight(int row, int col)
@@ -344,6 +345,7 @@ namespace Tetromino
         }
         private void LockShape()
         {
+            Sound sound = new Sound();
             (int posX, int posY)[] positions = GetPositions();
 
             for (int i = 0; i < positions.GetLength(0); i++)
@@ -359,6 +361,16 @@ namespace Tetromino
             }
 
             scoring += 2 + (rowsDeleted*10); // 2 puntos por colocar pieza + 10 por linea eliminada
+            
+            
+            if(rowsDeleted > 0)
+            {
+                sound.StartRowCompleted();
+            }
+            else
+            {
+                sound.StartPunch();
+            }
         }
 
         private void RegenerateShapes()

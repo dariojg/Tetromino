@@ -8,14 +8,13 @@ namespace Tetromino
 
         public int[,] matrix;
         public int[,] matrixNextShape;
-        int tileSize;
+        const int tileSize = 30;
 
         public int[] colors;
         public Grid()
         {
             matrix = new int[10, 20];
             matrixNextShape = new int[4, 4];
-            tileSize = 30;
             colors = new Colors().colors;
         }
 
@@ -53,8 +52,8 @@ namespace Tetromino
 
         public void DrawBoardNextShape(IntPtr img)
         {
-            int initPosX = 400;
-            int initPosY = 150;
+            int initPosX = 370;
+            int initPosY = 200;
             Sdl.SDL_Rect rect;
             for (int i = 0; i < matrixNextShape.GetLength(0); i++)
             {
@@ -65,8 +64,8 @@ namespace Tetromino
                     {
                         x = (short)(initPosX+i * tileSize),
                         y = (short)(initPosY+j * tileSize),
-                        w = (short)(tileSize - 1), 
-                        h = (short)(tileSize - 1)
+                        w = (short)(tileSize), 
+                        h = (short)(tileSize)
                     };
 
                     Sdl.SDL_FillRect(img, ref rect, colors[0]); //colors cellValue toma el indice de colors al principio siempre es 0
@@ -126,7 +125,6 @@ namespace Tetromino
             return true;
         }
 
-
         public void UpdateRows(int row, int countRows)
         {
             for (int col = 0; col < matrix.GetLength(0); col++)
@@ -144,7 +142,6 @@ namespace Tetromino
             }
         }
 
-        
         public void CleanBoard()
         {
             for (int i = 0; i < matrix.GetLength(0); i++)
