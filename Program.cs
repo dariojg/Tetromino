@@ -11,7 +11,7 @@ namespace Tetromino
         const int windowWidht = 640;
         const int windowHeight = 600;
         
-        static Board grid;
+        static Board board;
         static Tetromino tetromino;
         static ShapeRot currentShape;
         
@@ -30,7 +30,7 @@ namespace Tetromino
         static GameTime gameTime = new GameTime{};
 
         // Variables de estado
-        static bool running = true;
+        static bool running = false;
         static bool menu = true;
         static int scoring = 0;
         static bool keyPressed = false;
@@ -44,7 +44,7 @@ namespace Tetromino
             font = Engine.LoadFont("assets/font.ttf", 30);
             
             tetromino = new Tetromino();
-            grid = tetromino.board;
+            board = tetromino.board;
 
             gameTime.startTime = DateTime.Now;
             gameTime.speed = 0.7f;  // Velocidad de caída de la pieza
@@ -196,7 +196,7 @@ namespace Tetromino
 
         static void RestartGame()
         {
-            grid.CleanBoard();
+            board.CleanBoard();
             running = true;
             menu = !menu;
             tetromino.fullBoard = false;
