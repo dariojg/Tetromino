@@ -6,12 +6,7 @@ namespace Tetromino
     internal class Board
     {
 
-        public int[,] matrix;
-        public int[,] matrixNextShape;
-        const int tileSize = 30;
 
-        public int[] colors;
-        public Board()
         {
             matrix = new int[10, 20];
             matrixNextShape = new int[4, 4];
